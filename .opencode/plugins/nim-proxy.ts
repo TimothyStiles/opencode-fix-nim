@@ -20,6 +20,9 @@ export default (async function NimProxy(_ctx: any) {
   const server = Bun.serve({
     port: PROXY_PORT,
     async fetch(req) {
+      // Generate a deterministic request ID for consistent chunk correlation
+      const requestId = crypto.randomUUID();
+      
       // Incoming requests will be directed at the proxy base (we expect callers
       // to point their baseURL to http://localhost:9876/v1). Strip the leading
       // `/v1` prefix so we don't duplicate it when forwarding to NIM.
@@ -37,6 +40,7 @@ export default (async function NimProxy(_ctx: any) {
 
       const headers = new Headers(req.headers)
       headers.delete("host")
+      headers.set("x-nim-proxy-request-id", requestId)
 
       const upstreamResp = await fetch(upstream, {
         method: req.method,
@@ -92,10 +96,10 @@ export default (async function NimProxy(_ctx: any) {
                     const json = dataLine.slice(6).trim()
                     if (json === "[DONE]") return dataLine
                     try {
-                      const chunk = JSON.parse(json)
-                      if (!chunk.id || typeof chunk.id !== "string") {
-                        chunk.id = `msg_${crypto.randomUUID()}`
-                      }
+          const chunk = JSON.parse(json)
+          if (!chunk.id || typeof chunk.id !== "string") {
+            chunk.id = `msg_${requestId}`
+          }
 
                       for (const choice of chunk.choices ?? []) {
                         const delta = choice.delta ?? {}
@@ -112,15 +116,15 @@ export default (async function NimProxy(_ctx: any) {
                           let match: RegExpExecArray | null
                           while ((match = toolCallRegex.exec(delta.content)) !== null) {
                             const [, name, index, args] = match
-                            toolCalls.push({
-                              index: parseInt(index),
-                              id: `call_${crypto.randomUUID()}`,
-                              type: "function",
-                              function: {
-                                name,
-                                arguments: args,
-                              },
-                            })
+            toolCalls.push({
+              index: parseInt(index),
+              id: `call_${requestId}_${toolCalls.length}`,
+              type: "function",
+              function: {
+                name,
+                arguments: args,
+              },
+            })
                           }
 
                           // Replace content with clean text and add proper tool_calls
@@ -130,9 +134,9 @@ export default (async function NimProxy(_ctx: any) {
                           }
                         }
 
-                        // Patch any remaining missing ids on existing tool_calls
-                        for (const call of delta.tool_calls ?? []) {
-                          if (!call.id || typeof call.id !== "string") call.id = `call_${crypto.randomUUID()}`
+          // Patch any remaining missing ids on existing tool_calls
+          for (const call of delta.tool_calls ?? []) {
+            if (!call.id || typeof call.id !== "string") call.id = `call_${requestId}_${(delta.tool_calls ?? []).indexOf(call)}`
                           if (call.function && (!call.function.name || typeof call.function.name !== "string")) {
                             call.function.name = ""
                           }
@@ -168,20 +172,20 @@ export default (async function NimProxy(_ctx: any) {
       }
 
       // Only patch JSON responses (non-streaming)
-      if (contentType.includes("application/json")) {
-        const body = await upstreamResp.json() as any
+    if (contentType.includes("application/json")) {
+      const body = await upstreamResp.json() as any
 
-        if (!body.id || typeof body.id !== "string") {
-          body.id = `msg_${crypto.randomUUID()}`
-        }
+      if (!body.id || typeof body.id !== "string") {
+        body.id = `msg_${requestId}`
+      }
 
         // Also patch tool_calls entries missing `id`
         for (const choice of body.choices ?? []) {
-          for (const call of choice.message?.tool_calls ?? []) {
-            if (!call.id || typeof call.id !== "string") {
-              call.id = `call_${crypto.randomUUID()}`
-            }
-          }
+    for (const call of choice.message?.tool_calls ?? []) {
+      if (!call.id || typeof call.id !== "string") {
+        call.id = `call_${requestId}_${choice.message?.tool_calls?.indexOf(call) ?? 0}`
+      }
+    }
         }
 
         return new Response(JSON.stringify(body), {
