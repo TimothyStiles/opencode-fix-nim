@@ -2,15 +2,8 @@
   "$schema": "https://opencode.ai/config.json",
   "provider": {
     "nvidia": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "NVIDIA NIM",
       "options": {
         "baseURL": "http://localhost:9876/v1"
-      },
-      "models": {
-        "nvidia/devstral-2-123b-instruct-2512": {
-          "name": "Devstral-2-123B"
-        }
       }
     }
   }

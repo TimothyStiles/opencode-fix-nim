@@ -24,15 +24,16 @@ opencode
 
 The proxy runs on `localhost:9876` and patches tool responses automatically.
 
-## Revert
+## Uninstall
+
+npm v7+ does not run lifecycle scripts on uninstall, so you must clean up the config manually before removing the package:
 
 ```bash
-# Find and restore from backup
-ls ~/.config/opencode/opencode.json.backup-*
-cp ~/.config/opencode/opencode.json.backup-<timestamp> ~/.config/opencode/opencode.json
+node $(npm root -g)/opencode-nim-fix/scripts/uninstall.js
+npm uninstall -g opencode-nim-fix
 ```
 
-Or manually edit `~/.config/opencode/opencode.json` and change the NVIDIA `baseURL` back to `https://integrate.api.nvidia.com/v1`. Revert instructions are in the `_comment` field of the JSON.
+The uninstall script removes the proxy `baseURL` from your nvidia provider config and removes `opencode-nim-fix` from the plugin array. Nothing else is touched.
 
 ## License
 
