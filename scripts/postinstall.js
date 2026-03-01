@@ -82,17 +82,6 @@ async function updateConfig() {
     config.provider = config.provider || {}
     config.provider.nvidia = config.provider.nvidia || {}
     
-    config.provider.nvidia._comment = [
-      'Added by opencode-nim-fix plugin',
-      'Redirects NVIDIA NIM requests through localhost:9876 proxy',
-      'This fixes tool call formatting issues with NVIDIA NIM API',
-      'Original endpoint (for revert): ' + originalUrl,
-      'Current endpoint: http://localhost:9876/v1',
-      'To revert: Restore from backup or manually edit baseURL',
-    ].join(' | ')
-    
-    config.provider.nvidia.npm = '@ai-sdk/openai-compatible'
-    config.provider.nvidia.name = 'NVIDIA NIM via Proxy'
     config.provider.nvidia.options = config.provider.nvidia.options || {}
     config.provider.nvidia.options.baseURL = 'http://localhost:9876/v1'
     
