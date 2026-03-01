@@ -6,7 +6,6 @@ import { existsSync } from 'fs'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { fileURLToPath } from 'url'
 import { createRequire } from 'module'
-import readline from 'readline'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -74,31 +73,7 @@ async function updateConfig() {
     
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
     
-    const isCI = process.env.CI || process.env.NON_INTERACTIVE
-    
-    if (!isCI) {
-      console.log('Do you want to proceed with these changes? [y/N]')
-      
-      const reader = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-      })
-      
-      const answer = await new Promise(resolve => {
-        reader.question('', response => {
-          reader.close()
-          resolve(response)
-        })
-      })
-      
-      if (!answer || !['y', 'yes'].includes(answer.toLowerCase())) {
-        console.log('\n❌ Installation cancelled by user')
-        console.log('No changes were made to your configuration.\n')
-        process.exit(0)
-      }
-    }
-    
-    console.log('\n🔄 Proceeding with installation...\n')
+    console.log('🔄 Proceeding with automatic installation...\n')
     
     console.log('Creating backup...')
     await writeFile(backupPath, configContent)
