@@ -1,14 +1,21 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
-import { join } from 'path'
+import { join, dirname } from 'path'
 import { homedir } from 'os'
 import { existsSync } from 'fs'
+import { readFile, writeFile, mkdir } from 'fs/promises'
+import { fileURLToPath } from 'url'
+import { createRequire } from 'module'
+import readline from 'readline'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 async function updateConfig() {
   const configPath = join(homedir(), '.config', 'opencode', 'opencode.json')
   const pluginPath = join(homedir(), '.config', 'opencode', 'plugins', 'opencode-nim-fix.ts')
   const backupPath = `${configPath}.backup-${Date.now()}`
-  const pluginFromPackage = join(process.cwd(), '.opencode', 'plugins', 'opencode-nim-fix.ts')
+  const pluginFromPackage = join(__dirname, '..', '.opencode', 'plugins', 'opencode-nim-fix.ts')
   
   console.log('\n╔═══════════════════════════════════════════════════════════════╗')
   console.log('║  OpenCode NIM Proxy Plugin Installer                          ║')
@@ -41,7 +48,7 @@ async function updateConfig() {
   }
   
   try {
-    const configContent = await Bun.file(configPath).text()
+    const configContent = await readFile(configPath, 'utf-8')
     const config = JSON.parse(configContent)
     
     const oldUrl = config.provider?.nvidia?.options?.baseURL
@@ -72,7 +79,7 @@ async function updateConfig() {
     if (!isCI) {
       console.log('Do you want to proceed with these changes? [y/N]')
       
-      const reader = require('readline').createInterface({
+      const reader = readline.createInterface({
         input: process.stdin,
         output: process.stdout
       })
@@ -94,7 +101,7 @@ async function updateConfig() {
     console.log('\n🔄 Proceeding with installation...\n')
     
     console.log('Creating backup...')
-    await Bun.write(backupPath, configContent)
+    await writeFile(backupPath, configContent)
     console.log(`✓ Backup created: ${backupPath}\n`)
     
     console.log('Installing plugin...')
@@ -115,7 +122,8 @@ async function updateConfig() {
     }
     
     try {
-      await Bun.write(targetPluginPath, await Bun.file(pluginFromPackage).text())
+      const pluginContent = await readFile(pluginFromPackage, 'utf-8')
+      await writeFile(targetPluginPath, pluginContent)
       console.log(`✓ Plugin installed to: ${targetPluginPath}\n`)
     } catch (error) {
       console.log(`\n❌ Failed to install plugin: ${error}`)
@@ -143,7 +151,7 @@ async function updateConfig() {
     config.provider.nvidia.options = config.provider.nvidia.options || {}
     config.provider.nvidia.options.baseURL = 'http://localhost:9876/v1'
     
-    await Bun.write(configPath, JSON.stringify(config, null, 2) + '\n')
+    await writeFile(configPath, JSON.stringify(config, null, 2) + '\n')
     console.log('✓ Configuration updated successfully!\n')
     
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
@@ -181,12 +189,11 @@ async function updateConfig() {
   }
 }
 
-if (import.meta.main) {
+if (process.argv[1] === __filename) {
   await updateConfig().catch(error => {
     console.error('\nInstallation failed:', error)
     process.exit(1)
   })
 }
 
-e
 export default updateConfig
