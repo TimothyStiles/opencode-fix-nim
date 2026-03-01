@@ -1,0 +1,47 @@
+{
+  "name": "opencode-nim-proxy",
+  "version": "1.0.0",
+  "description": "OpenCode plugin that provides a local proxy for NVIDIA NIM API endpoints with tool call fixes",
+  "main": ".opencode/plugins/opencode-nim-fix.ts",
+  "type": "module",
+  "scripts": {
+    "postinstall": "bun scripts/postinstall.ts"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "nvidia",
+    "nim",
+    "proxy",
+    "repair",
+    "fix",
+    "strepair",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@opencode-ai/plugin": "^1.2.15"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.0"
+  },
+  "files": [
+    ".opencode/",
+    "scripts/"
+  ],
+  "peerDependencies": {
+    "bun": ">=1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TimothyStiles/opencode-nim-proxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TimothyStiles/opencode-nim-proxy/issues"
+  },
+  "homepage": "https://github.com/TimothyStiles/opencode-nim-proxy#readme"
+}
