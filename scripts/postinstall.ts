@@ -130,7 +130,7 @@ async function updateConfig() {
     config.provider.nvidia = config.provider.nvidia || {}
     
     config.provider.nvidia._comment = [
-      'Added by opencode-nim-proxy plugin',
+      'Added by opencode-nim-fix plugin',
       'Redirects NVIDIA NIM requests through localhost:9876 proxy',
       'This fixes tool call formatting issues with NVIDIA NIM API',
       'Original endpoint (for revert): ' + originalUrl,

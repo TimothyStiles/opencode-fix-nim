@@ -1,5 +1,5 @@
 {
-  "name": "opencode-nim-proxy",
+  "name": "opencode-nim-fix",
   "version": "0.1.0",
   "description": "OpenCode plugin that provides a local proxy for NVIDIA NIM API endpoints with tool call fixes",
   "main": ".opencode/plugins/opencode-nim-fix.ts",

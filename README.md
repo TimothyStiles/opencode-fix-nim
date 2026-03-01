@@ -1,6 +1,6 @@
 # OpenCode NIM Proxy
 
-[![npm version](https://badge.fury.io/js/opencode-nim-proxy.svg)](https://www.npmjs.com/package/opencode-nim-proxy)
+[![npm version](https://badge.fury.io/js/opencode-nim-fix.svg)](https://www.npmjs.com/package/opencode-nim-fix)
 
 Seamless OpenCode plugin that provides a local proxy for NVIDIA NIM API endpoints with automatic configuration.
 
@@ -16,10 +16,10 @@ Seamless OpenCode plugin that provides a local proxy for NVIDIA NIM API endpoint
 
 ```bash
 # Install globally (recommended)
-npm install -g opencode-nim-proxy
+npm install -g opencode-nim-fix
 
 # Or with bun
-bun add -g opencode-nim-proxy
+bun add -g opencode-nim-fix
 ```
 
 The installer will:
@@ -32,10 +32,10 @@ The installer will:
 
 ```bash
 # Skip interactive prompt (CI mode)
-CI=true npm install -g opencode-nim-proxy
+CI=true npm install -g opencode-nim-fix
 
 # Skip postinstall entirely
-npm install -g opencode-nim-proxy --ignore-scripts
+npm install -g opencode-nim-fix --ignore-scripts
 
 # Then manually configure following postinstall guidance
 ```
@@ -48,7 +48,7 @@ The installer modifies `~/.config/opencode/opencode.json` to:
 {
   "provider": {
     "nvidia": {
-      "_comment": "Added by opencode-nim-proxy plugin | Original endpoint (for revert): https://integrate.api.nvidia.com/v1 | Current endpoint: http://localhost:9876/v1",
+      "_comment": "Added by opencode-nim-fix plugin | Original endpoint (for revert): https://integrate.api.nvidia.com/v1 | Current endpoint: http://localhost:9876/v1",
       "npm": "@ai-sdk/openai-compatible",
       "name": "NVIDIA NIM via Proxy",
       "options": {
@@ -118,7 +118,7 @@ Edit `~/.config/opencode/opencode.json` and change `baseURL` back to:
 
 ```bash
 # Force reconfigure
-npm install -g opencode-nim-proxy --force
+npm install -g opencode-nim-fix --force
 ```
 
 ## Technical Details
@@ -179,8 +179,8 @@ curl http://localhost:9876/_debug
 
 ```bash
 # Clone and setup
-git clone https://github.com/TimothyStiles/opencode-nim-proxy
-cd opencode-nim-proxy
+git clone https://github.com/TimothyStiles/opencode-nim-fix
+cd opencode-nim-fix
 bun install
 
 # Test postinstall (safe mode)
@@ -200,6 +200,6 @@ Issues and PRs welcome!
 
 ## Support
 
-- 🐛 Issues: https://github.com/TimothyStiles/opencode-nim-proxy/issues
-- 📚 Docs: https://github.com/TimothyStiles/opencode-nim-proxy
+- 🐛 Issues: https://github.com/TimothyStiles/opencode-nim-fix/issues
+- 📚 Docs: https://github.com/TimothyStiles/opencode-nim-fix
 - 🔧 Troubleshooting: Check `--verbose` output
