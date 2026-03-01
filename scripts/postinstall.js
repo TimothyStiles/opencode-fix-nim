@@ -3,7 +3,7 @@
 import { join, dirname } from 'path'
 import { homedir } from 'os'
 import { existsSync } from 'fs'
-import { readFile, writeFile, mkdir } from 'fs/promises'
+import { readFile, writeFile } from 'fs/promises'
 import { fileURLToPath } from 'url'
 import { createRequire } from 'module'
 
@@ -12,9 +12,7 @@ const __dirname = dirname(__filename)
 
 async function updateConfig() {
   const configPath = join(homedir(), '.config', 'opencode', 'opencode.json')
-  const pluginPath = join(homedir(), '.config', 'opencode', 'plugins', 'opencode-nim-fix.ts')
   const backupPath = `${configPath}.backup-${Date.now()}`
-  const pluginFromPackage = join(__dirname, '..', '.opencode', 'plugins', 'opencode-nim-fix.ts')
   
   console.log('\n╔═══════════════════════════════════════════════════════════════╗')
   console.log('║  OpenCode NIM Proxy Plugin Installer                          ║')
@@ -69,7 +67,7 @@ async function updateConfig() {
     console.log('Additional fields will be added:')
     console.log(`  - provider.nvidia.npm: "@ai-sdk/openai-compatible"`)
     console.log(`  - provider.nvidia.name: "NVIDIA NIM via Proxy"`)
-    console.log(`  - provider.nvidia._comment: "proxy endpoint..."\n`)
+    console.log(`  - plugin: ["opencode-nim-fix"]\n`)
     
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
     
@@ -78,34 +76,6 @@ async function updateConfig() {
     console.log('Creating backup...')
     await writeFile(backupPath, configContent)
     console.log(`✓ Backup created: ${backupPath}\n`)
-    
-    console.log('Installing plugin...')
-    
-    const userPluginDir = join(homedir(), '.config', 'opencode', 'plugins')
-    const targetPluginPath = join(userPluginDir, 'opencode-nim-fix.ts')
-    
-    if (!existsSync(userPluginDir)) {
-      console.log(`\n❌ OpenCode plugin directory not found: ${userPluginDir}`)
-      console.log('Please ensure OpenCode is properly installed.\n')
-      process.exit(1)
-    }
-    
-    if (!existsSync(pluginFromPackage)) {
-      console.log(`\n❌ Plugin file not found in package: ${pluginFromPackage}`)
-      console.log('The package might be corrupted. Please reinstall.\n')
-      process.exit(1)
-    }
-    
-    try {
-      const pluginContent = await readFile(pluginFromPackage, 'utf-8')
-      await writeFile(targetPluginPath, pluginContent)
-      console.log(`✓ Plugin installed to: ${targetPluginPath}\n`)
-    } catch (error) {
-      console.log(`\n❌ Failed to install plugin: ${error}`)
-      console.log(`Source: ${pluginFromPackage}`)
-      console.log(`Target: ${targetPluginPath}\n`)
-      process.exit(1)
-    }
     
     console.log('Updating configuration...')
     
@@ -125,6 +95,12 @@ async function updateConfig() {
     config.provider.nvidia.name = 'NVIDIA NIM via Proxy'
     config.provider.nvidia.options = config.provider.nvidia.options || {}
     config.provider.nvidia.options.baseURL = 'http://localhost:9876/v1'
+    
+    // Add plugin to config for npm plugin loading
+    config.plugin = config.plugin || []
+    if (!config.plugin.includes('opencode-nim-fix')) {
+      config.plugin.push('opencode-nim-fix')
+    }
     
     await writeFile(configPath, JSON.stringify(config, null, 2) + '\n')
     console.log('✓ Configuration updated successfully!\n')
