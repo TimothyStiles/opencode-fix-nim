@@ -26,13 +26,13 @@ async function restoreConfig() {
 
     let modified = false
 
-    // Remove only opencode-nim-fix from plugin array
+    // Remove only opencode-fix-nim from plugin array
     if (Array.isArray(config.plugin)) {
-      const index = config.plugin.indexOf('opencode-nim-fix')
+      const index = config.plugin.indexOf('opencode-fix-nim')
       if (index !== -1) {
         config.plugin.splice(index, 1)
         modified = true
-        console.log('Removed opencode-nim-fix from plugin array')
+        console.log('Removed opencode-fix-nim from plugin array')
       }
     }
 

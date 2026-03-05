@@ -45,14 +45,14 @@ async function updateConfig() {
 
     // Add plugin entry only if not already present
     config.plugin = config.plugin || []
-    if (!config.plugin.includes('opencode-nim-fix')) {
-      config.plugin.push('opencode-nim-fix')
+    if (!config.plugin.includes('opencode-fix-nim')) {
+      config.plugin.push('opencode-fix-nim')
     }
 
     await writeFile(configPath, JSON.stringify(config, null, 2) + '\n')
 
     console.log(`baseURL: ${oldUrl || '(default)'} -> http://localhost:9876/v1`)
-    console.log('Added opencode-nim-fix to plugin array')
+    console.log('Added opencode-fix-nim to plugin array')
     console.log('\nDone.\n')
 
   } catch (error) {
