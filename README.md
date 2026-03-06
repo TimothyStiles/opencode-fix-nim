@@ -2,9 +2,9 @@
 
 This is a quick hack to get tool usage working with models hosted by Nvidia in opencode which more or less fixes this [issue](https://github.com/anomalyco/opencode/issues/6290) though there may be a few rendering bugs. 
 
-NIM provides a lot of really great opensource models for free that you can use with opencode but for some reason Nvidia doesn't use the standard api responses everyone else uses so tool usage was unreliable as of writing. 
+NIM provides a lot of really great open source models for free that you can use with opencode but for some reason Nvidia doesn't use the standard api responses everyone else uses so tool usage was unreliable as of writing. 
 
-This plugin essentially installs a super tiny local proxy in your opencode plugins directory and the intercepts responses from NVIDIA NIM tool calls that are missing the required 'ID; field and injects unique IDs for each tool call. For this to work it also modifies your opencode.json config and leaves instructions on how to revert.
+This plugin essentially installs a super tiny local proxy in your opencode plugins directory and then intercepts responses from NVIDIA NIM tool calls that are missing the required 'ID; field and injects unique IDs for each tool call. For this to work it also modifies your opencode.json config and leaves instructions on how to revert.
 
 Hopefully this plugin will be moot after this [PR from @T1mn](https://github.com/anomalyco/opencode/pull/12585) is merged but until then I hope this helps.
 
